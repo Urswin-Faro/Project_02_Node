@@ -3,6 +3,8 @@ import mysql from 'mysql2/promise';
 import { config } from 'dotenv';
 config();
 import cors from 'cors';
+import attendanceRouter from './routes/attendanceRouter.js'
+import { getAttendance } from './model/attendanceModel.js'
 import employeesRouter from './routes/employeesRouter.js';
 import { getEmployees } from './model/employeesModel.js';
 
@@ -19,6 +21,11 @@ app.get('/Employees', async (req, res) => {  // Await the async function
     } catch (error) {
         res.status(500).json({ error: "Error fetching employees", details: error.message });
     }
+});
+app.use('/attendance',attendanceRouter)
+
+app.get('/attendance',async (req,res)=>{
+    res.json({attendance: await getAttendance()})
 });
 
 app.use('/Employees', employeesRouter);
