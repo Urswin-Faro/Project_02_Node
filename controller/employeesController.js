@@ -1,10 +1,5 @@
 import { 
-    getEmployees, 
-    getSingleEmployee, 
-    addNewEmployee, 
-    updateEmployee, 
-    deleteEmployee 
-} from '../model/employeesModel.js';
+    getEmployees, getSingleEmployee, addNewEmployee, updateEmployee, deleteEmployee } from '../model/employeesModel.js';
 
 const getEmployeeCon = async (req, res) => {
     try {
