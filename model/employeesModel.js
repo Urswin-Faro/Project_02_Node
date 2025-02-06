@@ -1,27 +1,43 @@
-import {pool} from '../config/config.js'
+import { pool } from '../config/config.js';
 
-const getEmployees = async (req, res) => {
-   let[data] = await pool.query('SELECT * FROM employees')
-   return data
+const getEmployees = async () => {
+    let [data] = await pool.query('SELECT * FROM employees');
+    return data;
 };
+
 const getSingleEmployee = async (id) => {
-   let[data] = await pool.query('SELECT * FROM employees WHERE id = ?', [id])
-   return data
+    let [data] = await pool.query('SELECT * FROM employees WHERE employee_id = ?', [id]);
+    return data;
 };
 
-const addNewEmployee = async (employee_id, name, position, department,salary, employmenthistory, contact ) => {
-    let [data] = await pool.query('INSERT INTO employees VALUES (?, ?, ?, ?, ?, ?, ?, ?)', [employee_id, name, department, position, salary, employmenthistory, contact])
-    return await getEmployees()
- 
-}
-const updateEmployee = async () => {
-    await pool.query('UPDATE `moderntech_db` .`employees` SET `name` = ?, `department` = ?, `position` = ?, `salary` = ?, `employmenthistory` = ?, `contact` = ? WHERE id = ?', [product_id, name, department, position, salary, employmenthistory, contact,]
+const addNewEmployee = async (employee_id, name, department_id, position_id, email) => {
+    let [data] = await pool.query(
+        'INSERT INTO employees (employee_id, name, department_id, position_id, email) VALUES (?, ?, ?, ?, ?)', 
+        [employee_id, name, department_id, position_id, email]
     );
-    return data
-}
-const deleteEmployee = async () => {
-    await pool.query('DELETE FROM `moderntech_db` .`employees` WHERE id = ?', [id]
-    );
-    return await getEmployees()
-}
-export {getEmployees, getSingleEmployee, addNewEmployee, updateEmployee, deleteEmployee}
+    return await getEmployees();
+};
+
+
+const updateEmployee = async (employee_id, updateFields) => {
+    const fields = Object.keys(updateFields).filter(key => updateFields[key] !== undefined && updateFields[key] !== null);
+    
+    if (fields.length === 0) return await getEmployees(); // If no valid fields, just return the list of employees
+
+    const setClause = fields.map(key => `${key} = ?`).join(', ');
+    const values = fields.map(key => updateFields[key]);
+
+    const updateQuery = `UPDATE employees SET ${setClause} WHERE employee_id = ?`;
+    values.push(employee_id); // Add employee_id at the end
+
+    await pool.query(updateQuery, values);
+    return await getEmployees(); // Return the updated list of employees
+};
+
+
+const deleteEmployee = async (id) => {
+    await pool.query('DELETE FROM employees WHERE employee_id = ?', [id]);
+    return await getEmployees();
+};
+
+export { getEmployees, getSingleEmployee, addNewEmployee, updateEmployee, deleteEmployee };

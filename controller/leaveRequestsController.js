@@ -1,22 +1,25 @@
-import {getLeaveRequests, getSingleLeaveRequest, addNewLeaveRequest, updateLeaveRequest}from '../model/leaveRequestsModel.js'
+import {getLeaveRequests, getSingleLeaveRequest, addNewLeaveRequest, updateLeaveRequest} from '../model/leaveRequestsModel.js'
 
 const getLeaveRequestsCon = async (req, res) => {
-    res.json({leaveRequests: await getLeaveRequests()});
+    res.json({leave_requests: await getLeaveRequests()});
 };
 
 const getSingleLeaveRequestCon = async (req, res) => {
-    res.json({leaveRequest: await getSingleLeaveRequest(req.params.id)});
+    res.json({leave_requests: await getSingleLeaveRequest(req.params.employee_id)});
 };
 
 const addNewLeaveRequestCon = async (req, res) => {
-    res.json({message: await addNewLeaveRequest(req.body.id, req.body.name, req.body.position, req.body.department, req.body.salary, req.body.employmenthistory, req.body.contact)});
+    console.log(req.body);
+    let {employee_id, date, reason, status} = req.body
+    res.json({leave_requests : await addNewLeaveRequest( employee_id, date, reason, status)});
 };
 
 const updateLeaveRequestCon = async (req, res) => {
-    res.json({message: await updateLeaveRequest()});
+    let {employee_id, date, reason, status} = req.body
+    res.json({leave_requests: await updateLeaveRequest(employee_id, date, reason, status)});
 };
 const deleteLeaveRequestCon = async (req, res) => {
-    res.json({message: await deleteLeaveRequest(req.params.id)});
+    res.json({leave_requests: await deleteLeaveRequest(req.params.employee_id)});
 };
 
 export {getLeaveRequestsCon, getSingleLeaveRequestCon, addNewLeaveRequestCon, updateLeaveRequestCon, deleteLeaveRequestCon};
