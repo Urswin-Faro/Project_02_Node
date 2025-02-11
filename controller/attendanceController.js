@@ -1,12 +1,7 @@
 // import {getAttendance,createAttendance,updateAttendance,deleteAttendance} from '../model/attendanceModel.js'
-
 // // const Attendance = require('../models/attendanceModel');
 // const getAttendanceCon = async (req, res) => {
 //     res.json({attendance : await getAttendance()});
-
-
-
-
 //     // const employeeId = req.params.id;
 //     // getAttendance.getAttendance(employeeId, (err, results) => {
 //     //     if (err) return res.status(500).json({ message: 'Error retrieving attendance', error: err });
@@ -14,12 +9,9 @@
 //     // });
 // };
 // const createAttendanceCon = async (req, res) => {
-//     let{employee_id, date, status} = req.body 
+//     let{employee_id, date, status} = req.body
 //     console.log(req.body);
 //     res.json({attendance: await createAttendance(employee_id, date, status)})
-
-
-
 //     // const attendanceData = req.body;
 //     // getAttendance.createAttendance(attendanceData, (err, result) => {
 //     //     if (err) return res.status(500).json({ message: 'Error creating attendance', error: err });
@@ -29,10 +21,7 @@
 // const patchAttendanceCon = async (req, res) => {
 //     let {employee_id, date, status} = req.body
 //     console.log(req.body);
-    
 //     res.json({attendance: await updateAttendance(employee_id, date, status)})
-    
-    
 //     // const attendanceId = req.params.id;
 //     // const status = req.body.status;
 //     // attendanceId.updateAttendance(attendanceId, status, (err, result) => {
@@ -43,11 +32,7 @@
 // };
 // const deleteAttendanceCon = async (req, res) => {
 //     res.json({attendance: await deleteAttendance(req.params.employee_id)
-
 //     })
-    
-    
-    
 //     // const attendanceId = req.params.id;
 //     // attendanceId.deleteAttendance(attendanceId, (err, result) => {
 //     //     if (err) return res.status(500).json({ message: 'Error deleting attendance', error: err });
@@ -56,10 +41,7 @@
 //     // });
 // };
 // export {getAttendanceCon,createAttendanceCon,patchAttendanceCon,deleteAttendanceCon};
-
-
 import { getAttendance, createAttendance, updateAttendance, deleteAttendance } from '../model/attendanceModel.js';
-
 // Get all attendance records
 const getAttendanceCon = async (req, res) => {
     try {
@@ -69,7 +51,6 @@ const getAttendanceCon = async (req, res) => {
         res.status(500).json({ message: 'Error retrieving attendance', error: err });
     }
 };
-
 // Create a new attendance record
 const createAttendanceCon = async (req, res) => {
     const { employee_id, date, status } = req.body;
@@ -80,7 +61,6 @@ const createAttendanceCon = async (req, res) => {
         res.status(500).json({ message: 'Error creating attendance', error: err });
     }
 };
-
 // Update an existing attendance record
 const patchAttendanceCon = async (req, res) => {
     const { employee_id, date, status } = req.body;
@@ -94,7 +74,6 @@ const patchAttendanceCon = async (req, res) => {
         res.status(500).json({ message: 'Error updating attendance', error: err });
     }
 };
-
 // Delete an attendance record
 const deleteAttendanceCon = async (req, res) => {
     const { id } = req.params; // Use a unique identifier like `id`
@@ -108,5 +87,4 @@ const deleteAttendanceCon = async (req, res) => {
         res.status(500).json({ message: 'Error deleting attendance', error: err });
     }
 };
-
 export { getAttendanceCon, createAttendanceCon, patchAttendanceCon, deleteAttendanceCon };

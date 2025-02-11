@@ -26,11 +26,11 @@ const getSingleEmployeeCon = async (req, res) => {
 const addNewEmployeeCon = async (req, res) => {
     try {
         console.log(req.body);
-        let { employee_id, name, department_id, position_id, email } = req.body;
-        if (!employee_id || !name || !department_id || !position_id || !email) {
+        let {  name, department, position,salary,employment_history, email} = req.body;
+        if ( !name || !department || !position || !email || !salary || !employment_history) {
             return res.status(400).json({ error: "Missing required fields" });
         }
-        const employees = await addNewEmployee(employee_id, name, department_id, position_id, email);
+        const employees = await addNewEmployee( name, department, position,salary,employment_history, email);
         res.json({ employees });
     } catch (error) {
         res.status(500).json({ error: "Error adding new employee", details: error.message });
@@ -40,13 +40,13 @@ const addNewEmployeeCon = async (req, res) => {
 const updateEmployeeCon = async (req, res) => {
     try {
         const employee_id = parseInt(req.params.employee_id);  // Get ID from params
-        const { email, name, position_id, department_id } = req.body;  // Get fields from request body
+        const { name, department, position,salary,employment_history, email } = req.body;  // Get fields from request body
 
         if (!employee_id) {
             return res.status(400).json({ error: "Missing employee ID" });
         }
 
-        const updatedEmployee = await updateEmployee(employee_id, { email, name, position_id, department_id });
+        const updatedEmployee = await updateEmployee(employee_id, {name, department, position,salary,employment_history, email });
 
         if (!updatedEmployee) {
             return res.status(404).json({ error: "Employee not found" });
