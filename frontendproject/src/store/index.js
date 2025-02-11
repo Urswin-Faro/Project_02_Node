@@ -30,17 +30,17 @@ export default createStore({
       const { attendance } = await (await fetch('http://localhost:3030/attendance')).json()
       commit('setAttendance', attendance)
     },
-    async postAttendance({ commit }, attendant) {
-      console.log(attendant);
+    async postAttendance({ commit }, attendance) {
+      console.log(attendance);
       await fetch('http://localhost:3030/attendance', {
         method: 'POST',
         headers: {
           "Content-Type": "application/json"
         },
         body: JSON.stringify({
-          employee_id: attendant.employee_id,
-          date: attendant.date,
-          status: attendant.status
+          employee_id: attendance.employee_id,
+          date: attendance.date,
+          status: attendance.status
         })
       })
       await this.dispatch('getAttendance');
