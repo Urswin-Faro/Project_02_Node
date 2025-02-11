@@ -1,24 +1,18 @@
 import {pool} from '../config/config.js'
-
 // const db = require('../config/db');
 const getAttendance = async () => {
     let [data] = await pool.query('SELECT * FROM attendance')
     return data
-
     //     db.query('SELECT * FROM attendance WHERE employee_id = ?', [employeeId], callback);
 };
-
 // ASK MATTHEW
 const createAttendance = async (employee_id, date, status) => {
     await pool.query(
-      'INSERT INTO attendance (employee_id, date, status) VALUES (?, ?, ?)', 
+      'INSERT INTO attendance (employee_id, date, status) VALUES (?, ?, ?)',
       [employee_id, date, status]
     );
   };
-  
-
 //   ASK MATTHEW
-   
     // const { employee_id, date, status } = data;
     // const query = 'INSERT INTO attendance (employee_id, date, status) VALUES (?, ?, ?)';
     // db.query(query, [employee_id, date, status], callback);

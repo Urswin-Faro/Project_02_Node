@@ -10,10 +10,10 @@ const getSingleEmployee = async (id) => {
     return data;
 };
 
-const addNewEmployee = async (employee_id, name, department_id, position_id, email) => {
+const addNewEmployee = async (employee_id, name, department, position,salary,employment_history, email) => {
     let [data] = await pool.query(
-        'INSERT INTO employees (employee_id, name, department_id, position_id, email) VALUES (?, ?, ?, ?, ?)', 
-        [employee_id, name, department_id, position_id, email]
+        'INSERT INTO employees (employee_id, name, department, position,salary,employment_history, email) VALUES (?, ?, ?, ?, ?)', 
+        [employee_id, name, department, position,salary,employment_history, email]
     );
     return await getEmployees();
 };
