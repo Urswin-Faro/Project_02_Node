@@ -12,37 +12,6 @@
           </option>
         </select>
       </div>
-      <!-- Employee Information -->
-      <div class="form-group">
-        <label for="employee-name">Employee Name</label>
-        <input
-          type="text"
-          id="employee-name"
-          v-model="form.employeeName"
-          placeholder="Enter employee name"
-          readonly
-        />
-      </div>
-      <div class="form-group">
-        <label for="employee-position">Position</label>
-        <input
-          type="text"
-          id="employee-position"
-          v-model="form.position"
-          placeholder="Position"
-          readonly
-        />
-      </div>
-      <!-- Review Period -->
-      <div class="form-group">
-        <label for="review-period">Review Period</label>
-        <input
-          type="month"
-          id="review-period"
-          v-model="form.reviewPeriod"
-          required
-        />
-      </div>
       <!-- Performance Metrics -->
       <div class="form-group">
         <label for="work-quality">Work Quality</label>

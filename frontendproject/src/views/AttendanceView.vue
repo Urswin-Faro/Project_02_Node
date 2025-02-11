@@ -1,87 +1,99 @@
 <template>
-  <nav>
-    <h1 class="poes">Employee Leave & Request Form</h1>
-    <form class="d-flex" role="search">
-      <input
-        type="text"
-        v-model="searchQuery"
-        placeholder="Search for employees..."
-        class="search-bar"
-      />
-    </form>
-  </nav>
-  <div id="app">
-    <!-- Wrapper for the employee cards -->
-    <div class="employee-container">
-      <div
-        v-for="employee in filteredEmployees"
-        :key="employee.employeeId"
-        :class="['employee-card', statusClass(employee)]"
-      >
-        <h2>{{ employee.name }}</h2>
-        <button @click="toggleForm(employee.employeeId)">Request Leave</button>
-        <div v-if="employee.showForm">
-          <form @submit.prevent="showConfirmationModal(employee.employeeId)">
-            <label for="date">Date:</label>
-            <input type="date" v-model="leaveForm.date" required />
-            <label for="reason">Reason:</label>
-            <input
-              type="text"
-              v-model="leaveForm.reason"
-              placeholder="Enter reason for leave"
-              required
-            />
-            <button type="submit">Submit</button>
-          </form>
-        </div>
-        <h3>Attendance</h3>
-        <table>
-          <thead>
-            <tr>
-              <th>Date</th>
-              <th>Status</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr
-              v-for="attendance in employee.attendance"
-              :key="attendance.date"
-            >
-              <td>{{ attendance.date }}</td>
-              <td>{{ attendance.status }}</td>
-            </tr>
-          </tbody>
-        </table>
-        <h3>Leave Requests</h3>
-        <table>
-          <thead>
-            <tr>
-              <th>Date</th>
-              <th>Reason</th>
-              <th>Status</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="request in employee.leaveRequests" :key="request.date">
-              <td>{{ request.date }}</td>
-              <td>{{ request.reason }}</td>
-              <td :class="request.status.toLowerCase()">
-                {{ request.status }}
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
+  <div class="container">
+    <!-- Button container aligned to top left -->
+    <div class="button-container">
+      <button @click="showAddAttendantForm = !showAddAttendantForm">
+        Add New Attendant
+      </button>
+      <button @click="showLeaveRequestForm = !showLeaveRequestForm">
+        Request Leave
+      </button>
+      <button @click="showAttendanceList = !showAttendanceList">
+        Show Attendance List
+      </button>
+      <button @click="showLeaveRequestList = !showLeaveRequestList">
+        Leave Request List
+      </button>
     </div>
-    <!-- Custom Confirmation Modal -->
-    <div v-if="showConfirmation" class="modal-overlay">
-      <div class="modal-content">
-        <p>Are you sure you want to submit this leave request?</p>
-        <button @click="submitLeaveRequest(selectedEmployee.employeeId)">
-          Yes
-        </button>
-        <button @click="closeConfirmation">No</button>
-      </div>
+    <!-- Add New Attendant Form (conditional rendering based on showAddAttendantForm) -->
+    <div v-if="showAddAttendantForm" class="form-container">
+      <h2>Add New Attendant</h2>
+      <label>
+        <span>Employee ID:</span>
+        <input type="text" v-model="attendant.employee_id" />
+      </label><br>
+      <label>
+        <span>Date:</span>
+        <input type="text" v-model="attendant.date" />
+      </label><br>
+      <label>
+        <span>Status:</span>
+        <input type="text" v-model="attendant.status" />
+      </label><br><br>
+      <button @click="postAttendant()">Add New Attendant</button>
+    </div>
+    <!-- Leave Request Form (conditional rendering based on showLeaveRequestForm) -->
+    <div v-if="showLeaveRequestForm" class="form-container">
+      <h2>Leave Request</h2>
+      <label>
+        <span>Employee ID:</span>
+        <input type="text" v-model="leaveRequest.employee_id" />
+      </label><br>
+      <label>
+        <span>Start Date:</span>
+        <input type="date" v-model="leaveRequest.start_date" />
+      </label><br>
+      <label>
+        <span>End Date:</span>
+        <input type="date" v-model="leaveRequest.end_date" />
+      </label><br>
+      <label>
+        <span>Reason:</span>
+        <textarea v-model="leaveRequest.reason" rows="4"></textarea>
+      </label><br><br>
+      <button @click="submitLeaveRequest()">Submit Leave Request</button>
+    </div>
+    <!-- Attendance List Table (conditional rendering based on showAttendanceList) -->
+    <div v-if="showAttendanceList" class="attendance-list">
+      <h2>Attendance List</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Employee ID</th>
+            <th>Date</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="attendant in $store.state.attendance" :key="attendant.employee_id">
+            <td>{{ attendant.employee_id }}</td>
+            <td>{{ attendant.date }}</td>
+            <td>{{ attendant.status }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <!-- Leave Request List Table (conditional rendering based on showLeaveRequestList) -->
+    <div v-if="showLeaveRequestList" class="leave-request-list">
+      <h2>Leave Request List</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Employee ID</th>
+            <th>Start Date</th>
+            <th>End Date</th>
+            <th>Reason</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="request in $store.state.leaveRequests" :key="request.employee_id">
+            <td>{{ request.employee_id }}</td>
+            <td>{{ request.start_date }}</td>
+            <td>{{ request.end_date }}</td>
+            <td>{{ request.reason }}</td>
+          </tr>
+        </tbody>
+      </table>
     </div>
   </div>
 </template>
@@ -89,411 +101,177 @@
 export default {
   data() {
     return {
-      searchQuery: "",
-      employees: [
-        {
-          employeeId: 1,
-          name: "Sibongile Nkosi",
-          attendance: [
-            { date: "2024-11-25", status: "Present" },
-            { date: "2024-11-26", status: "Absent" },
-            { date: "2024-11-27", status: "Present" },
-            { date: "2024-11-28", status: "Present" },
-            { date: "2024-11-29", status: "Present" },
-          ],
-          leaveRequests: [
-            { date: "2024-11-22", reason: "Sick Leave", status: "Approved" },
-            { date: "2024-12-01", reason: "Personal", status: "Pending" },
-          ],
-          showForm: false,
-        },
-        {
-          employeeId: 2,
-          name: "Lungile Moyo",
-          attendance: [
-            { date: "2024-11-25", status: "Present" },
-            { date: "2024-11-26", status: "Present" },
-            { date: "2024-11-27", status: "Absent" },
-            { date: "2024-11-28", status: "Present" },
-            { date: "2024-11-29", status: "Present" },
-          ],
-          leaveRequests: [
-            {
-              date: "2024-11-15",
-              reason: "Family Responsibility",
-              status: "Denied",
-            },
-            { date: "2024-12-02", reason: "Vacation", status: "Approved" },
-          ],
-          showForm: false,
-        },
-        {
-          employeeId: 3,
-          name: "Thabo Molefe",
-          attendance: [
-            { date: "2024-11-25", status: "Present" },
-            { date: "2024-11-26", status: "Present" },
-            { date: "2024-11-27", status: "Present" },
-            { date: "2024-11-28", status: "Absent" },
-            { date: "2024-11-29", status: "Present" },
-          ],
-          leaveRequests: [
-            {
-              date: "2024-11-10",
-              reason: "Medical Appointment",
-              status: "Approved",
-            },
-            { date: "2024-12-05", reason: "Personal", status: "Pending" },
-          ],
-          showForm: false,
-        },
-        {
-          employeeId: 4,
-          name: "Keshav Naidoo",
-          attendance: [
-            { date: "2024-11-25", status: "Absent" },
-            { date: "2024-11-26", status: "Present" },
-            { date: "2024-11-27", status: "Present" },
-            { date: "2024-11-28", status: "Present" },
-            { date: "2024-11-29", status: "Present" },
-          ],
-          leaveRequests: [
-            { date: "2024-11-20", reason: "Bereavement", status: "Approved" },
-          ],
-          showForm: false,
-        },
-        {
-          employeeId: 5,
-          name: "Zanele Khumalo",
-          attendance: [
-            { date: "2024-11-25", status: "Present" },
-            { date: "2024-11-26", status: "Present" },
-            { date: "2024-11-27", status: "Absent" },
-            { date: "2024-11-28", status: "Present" },
-            { date: "2024-11-29", status: "Present" },
-          ],
-          leaveRequests: [
-            { date: "2024-12-01", reason: "Childcare", status: "Pending" },
-          ],
-          showForm: false,
-        },
-        {
-          employeeId: 6,
-          name: "Sipho Zulu",
-          attendance: [
-            { date: "2024-11-25", status: "Present" },
-            { date: "2024-11-26", status: "Present" },
-            { date: "2024-11-27", status: "Absent" },
-            { date: "2024-11-28", status: "Present" },
-            { date: "2024-11-29", status: "Present" },
-          ],
-          leaveRequests: [
-            { date: "2024-11-18", reason: "Sick Leave", status: "Approved" },
-          ],
-          showForm: false,
-        },
-        {
-          employeeId: 7,
-          name: "Naledi Moeketsi",
-          attendance: [
-            { date: "2024-11-25", status: "Present" },
-            { date: "2024-11-26", status: "Present" },
-            { date: "2024-11-27", status: "Present" },
-            { date: "2024-11-28", status: "Absent" },
-            { date: "2024-11-29", status: "Present" },
-          ],
-          leaveRequests: [
-            { date: "2024-11-22", reason: "Vacation", status: "Pending" },
-          ],
-          showForm: false,
-        },
-        {
-          employeeId: 8,
-          name: "Farai Gumbo",
-          attendance: [
-            { date: "2024-11-25", status: "Present" },
-            { date: "2024-11-26", status: "Absent" },
-            { date: "2024-11-27", status: "Present" },
-            { date: "2024-11-28", status: "Present" },
-            { date: "2024-11-29", status: "Present" },
-          ],
-          leaveRequests: [
-            {
-              date: "2024-12-02",
-              reason: "Medical Appointment",
-              status: "Approved",
-            },
-          ],
-          showForm: false,
-        },
-        {
-          employeeId: 9,
-          name: "Karabo Dlamini",
-          attendance: [
-            { date: "2024-11-25", status: "Present" },
-            { date: "2024-11-26", status: "Present" },
-            { date: "2024-11-27", status: "Present" },
-            { date: "2024-11-28", status: "Absent" },
-            { date: "2024-11-29", status: "Present" },
-          ],
-          leaveRequests: [
-            { date: "2024-11-19", reason: "Childcare", status: "Denied" },
-          ],
-          showForm: false,
-        },
-        {
-          employeeId: 10,
-          name: "Fatima Patel",
-          attendance: [
-            { date: "2024-11-25", status: "Present" },
-            { date: "2024-11-26", status: "Present" },
-            { date: "2024-11-27", status: "Absent" },
-            { date: "2024-11-28", status: "Present" },
-            { date: "2024-11-29", status: "Present" },
-          ],
-          leaveRequests: [
-            { date: "2024-12-03", reason: "Vacation", status: "Pending" },
-          ],
-          showForm: false,
-        },
-      ],
-      leaveForm: {
-        date: "",
-        reason: "",
+      attendant: {
+        employee_id: null,
+        date: null,
+        status: null
       },
-      showConfirmation: false,
-      selectedEmployee: null,
-    };
-  },
-  computed: {
-    filteredEmployees() {
-      if (!this.searchQuery) {
-        return this.employees; // Corrected reference from `this.employee` to `this.employees`
+      showAddAttendantForm: false,  // To control visibility of the Add Attendant form
+      showLeaveRequestForm: false,  // To control visibility of the leave form
+      showAttendanceList: false,    // To control visibility of the attendance list
+      showLeaveRequestList: false,  // To control visibility of the leave request list
+      leaveRequest: {
+        employee_id: null,
+        start_date: null,
+        end_date: null,
+        reason: null
       }
-      const query = this.searchQuery.toLowerCase();
-      return this.employees.filter(
-        (employee) => employee.name.toLowerCase().includes(query) // Filter by employee name only
-      );
-    },
+    }
+  },
+  mounted() {
+    this.$store.dispatch('getAttendance');
+    this.$store.dispatch('getLeaveRequests');  // Dispatch action to get leave requests
   },
   methods: {
-    toggleForm(employeeId) {
-      this.employees.forEach((employees) => {
-        if (employees.employeeId === employeeId) {
-          employees.showForm = !employees.showForm;
-        } else {
-          employees.showForm = false;
-        }
-      });
+    postAttendant() {
+      this.$store.dispatch('postAttendance', this.attendant);
     },
-    statusClass(employee) {
-      const lastAttendance =
-        employee.attendance[employee.attendance.length - 1];
-      if (lastAttendance.status === "Absent") {
-        return "status-absent";
-      } else if (lastAttendance.status === "Present") {
-        return "status-present";
-      }
-      return ""; // Default class if no specific status applies
-    },
-
-    showConfirmationModal(employeeId) {
-      const employee = this.employees.find(
-        (emp) => emp.employeeId === employeeId
-      );
-      if (employee) {
-        this.selectedEmployee = employee;
-        this.showConfirmation = true;
-      }
-    },
-    submitLeaveRequest(employeeId) {
-      const employee = this.employees.find(
-        (emp) => emp.employeeId === employeeId
-      );
-      if (employee) {
-        // Add the leave request to the employee's leaveRequests array
-        employee.leaveRequests.push({
-          date: this.leaveForm.date,
-          reason: this.leaveForm.reason,
-          status: "Pending",
-        });
-        // Reset the form
-        this.leaveForm.date = "";
-        this.leaveForm.reason = "";
-        // Close the form
-        employee.showForm = false;
-        // Close the confirmation modal
-        this.showConfirmation = false;
-      }
-    },
-    closeConfirmation() {
-      this.showConfirmation = false;
-      this.selectedEmployee = null;
-    },
+    submitLeaveRequest() {
+      // Handle the leave request submission logic (e.g., dispatch to store or API)
+      console.log('Leave Request Submitted:', this.leaveRequest);
+      // Reset the form after submission
+      this.leaveRequest = { employee_id: null, start_date: null, end_date: null, reason: null };
+      this.showLeaveRequestForm = false;  // Hide the form after submission
+    }
   },
-};
+}
 </script>
-<!-- Styling -->
+<!-- Scoped Styling -->
 <style scoped>
-#app {
-  font-family: Arial, sans-serif;
+/* General container styling */
+.container {
+  max-width: 800px;
+  margin: 0 auto;
   padding: 20px;
-  text-align: center;
+  font-family: Arial, sans-serif;
 }
-.employee-container {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 20px;
-}
-.employee-card {
-  border: 1px solid #ddd;
-  padding: 8px;
-  margin-bottom: 15px;
-  border-radius: 8px;
-  background-color: #f9f9f9;
-  width: 370px;
-  box-sizing: border-box;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-.employee-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-}
-.poes {
-  color: white;
-  font-size: 36px;
-}
-form {
+/* Button container */
+.button-container {
+  position: absolute;
+  top: 70px;  /* Increased the top value */
+  left: 10px;
+  z-index: 1000;  /* Ensure the buttons stay on top */
   display: flex;
   flex-direction: column;
-  margin-top: 10px;
 }
+.button-container button {
+  margin: 5px 0;
+}
+/* Form container styling */
+.form-container {
+  margin-bottom: 30px;
+  background-color: #F9F9F9;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+h2 {
+  text-align: center;
+  color: #333;
+}
+/* Form labels and inputs */
 label {
-  margin-top: 10px;
-  font-weight: bold;
+  display: block;
+  margin: 10px 0;
+  font-size: 16px;
 }
-input {
+label span {
+  font-weight: bold;
+  margin-right: 10px;
+}
+input[type="text"],
+input[type="date"],
+textarea {
   padding: 8px;
-  margin-top: 5px;
+  font-size: 14px;
+  width: 100%;
+  max-width: 300px;
   border: 1px solid #ddd;
   border-radius: 4px;
+  margin-top: 5px;
 }
+textarea {
+  resize: vertical;
+}
+/* Button styling */
 button {
-  padding: 6px 12px;
-  background-color: #28a745;
+  padding: 10px 20px;
+  font-size: 16px;
+  background-color: #4CAF50;
   color: white;
   border: none;
-  border-radius: 20px;
+  border-radius: 4px;
   cursor: pointer;
-  margin-top: 10px;
-  border-radius: 10px;
+  display: block;
+  margin: 20px auto;
+  width: 100%;
+  max-width: 200px;
 }
 button:hover {
-  background-color: #218838;
+  background-color: #45A049;
 }
-button[type="submit"] {
-  background-color: #007bff;
-}
-button[type="submit"]:hover {
-  background-color: #0056b3;
-}
-button[type="button"] {
-  padding: 6px 12px;
-  border-radius: 20px;
-}
-table {
+/* Table styling */
+.attendance-list table,
+.leave-request-list table {
   width: 100%;
-  margin-top: 10px;
   border-collapse: collapse;
-}
-table th,
-table td {
-  border: 1px solid #ddd;
-  padding: 8px;
-  text-align: left;
-}
-table th {
-  background-color: #f1f1f1;
-}
-.modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.7);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 999;
-}
-.modal-content {
+  margin-top: 20px;
   background-color: #fff;
-  padding: 20px 40px;
-  border-radius: 8px;
-  text-align: center;
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-  width: 300px;
-  max-width: 80%;
 }
-.modal-content p {
-  margin-bottom: 20px;
-  font-size: 18px;
+.attendance-list th, .attendance-list td,
+.leave-request-list th, .leave-request-list td {
+  padding: 12px;
+  text-align: left;
+  border: 1px solid #ddd;
+}
+.attendance-list th,
+.leave-request-list th {
+  background-color: #F2F2F2;
   font-weight: bold;
-  color: #000;
+  text-transform: uppercase;
+  color: #333;
 }
-.modal-content button {
-  padding: 10px 20px;
-  background-color: #28a745;
-  color: white;
-  border: none;
-  border-radius: 4px;
+.attendance-list tr:nth-child(even),
+.leave-request-list tr:nth-child(even) {
+  background-color: #F9F9F9;
+}
+.attendance-list tr:hover,
+.leave-request-list tr:hover {
+  background-color: #F1F1F1;
   cursor: pointer;
-  margin-top: 10px;
 }
-.modal-content button:hover {
-  background-color: #218838;
+.attendance-list td,
+.leave-request-list td {
+  font-size: 14px;
+  color: #555;
 }
-.modal-content button[type="button"] {
-  background-color: #ff4e4e;
-}
-.modal-content button[type="button"]:hover {
-  background-color: #e43f3f;
-}
-/* Color Coordination for Leave Request Statuses */
-.approved {
-  color: #28a745; /* Green */
-}
-.pending {
-  color: #ffca28; /* Yellow */
-}
-.denied {
-  color: #ff4e4e; /* Red */
-}
-.custom-navbar {
-  background-color: hsla(133, 88%, 56%, 0.2);
-  border-radius: 8px;
-  height: 100px;
-}
-.status-absent {
-  border-color: #ff4e4e; /* Red border */
-  background-color: #ffeeee; /* Light red background */
-}
-.status-present {
-  border-color: #28a745; /* Green border */
-  background-color: #e8f5e9; /* Light green background */
-}
-.approved {
-  color: #28a745; /* Green text for Approved */
-  font-weight: bold;
-}
-.pending {
-  color: #ffca28; /* Yellow text for Pending */
-  font-weight: bold;
-}
-.denied {
-  color: #ff4e4e; /* Red text for Denied */
-  font-weight: bold;
+/* Responsive table adjustments */
+@media (max-width: 600px) {
+  .attendance-list table,
+  .leave-request-list table,
+  .attendance-list th,
+  .leave-request-list th,
+  .attendance-list td,
+  .leave-request-list td {
+    display: block;
+    width: 100%;
+  }
+  .attendance-list th,
+  .leave-request-list th {
+    background-color: #F2F2F2;
+    text-align: left;
+    font-size: 16px;
+  }
+  .attendance-list td,
+  .leave-request-list td {
+    padding: 8px 5px;
+    font-size: 14px;
+  }
 }
 </style>
+
+
+
+
+
+
