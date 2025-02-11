@@ -54,12 +54,12 @@ const getAttendanceCon = async (req, res) => {
 // Create a new attendance record
 const createAttendanceCon = async (req, res) => {
     const { employee_id, date, status } = req.body;
-    try {
+    // try {
         const attendance = await createAttendance(employee_id, date, status);
         res.status(201).json({ message: 'Attendance created successfully', attendance });
-    } catch (err) {
-        res.status(500).json({ message: 'Error creating attendance', error: err });
-    }
+    // } catch (err) {
+    //     res.status(500).json({ message: 'Error creating attendance', error: err });
+    // }
 };
 // Update an existing attendance record
 const patchAttendanceCon = async (req, res) => {
