@@ -13,25 +13,31 @@ CREATE TABLE Attendance (
     attendance_id INT AUTO_INCREMENT PRIMARY KEY,
     employee_id INT,
     date DATE,
-    status ENUM('Present', 'Absent'),
-    FOREIGN KEY (employee_id) REFERENCES Employees(employee_id)
+    status ENUM('Present', 'Absent')
 );
 CREATE TABLE LeaveRequests (
     leave_id INT AUTO_INCREMENT PRIMARY KEY,
     employee_id INT,
     date DATE,
     reason TEXT,
-    status ENUM('Pending', 'Approved', 'Denied'),
-    FOREIGN KEY (employee_id) REFERENCES Employees(employee_id)
+    status ENUM('Pending', 'Approved', 'Denied')
 );
 CREATE TABLE Payroll (
-    payroll_id INT AUTO_INCREMENT PRIMARY KEY,
+    payroll_id INT PRIMARY KEY AUTO_INCREMENT,
     employee_id INT,
-    hours_worked INT,
-    leave_deductions INT,
-    final_salary DECIMAL(10,2),
-    FOREIGN KEY (employee_id) REFERENCES Employees(employee_id)
+    hours_worked INT NOT NULL,
+    leave_deductions INT NOT NULL,
+    final_salary DECIMAL(10,2) NOT NULL,
+    FOREIGN KEY (employee_id) REFERENCES Employees(employee_id) ON DELETE CASCADE
 );
+
+CREATE TABLE `moderntech_db`.`review` (
+  `employee_id` INT NOT NULL,
+  `work_quality` VARCHAR(45) NOT NULL,
+  `attendance` VARCHAR(45) NOT NULL,
+  `coments` VARCHAR(100) NOT NULL,
+  PRIMARY KEY (`employee_id`));
+  
 INSERT INTO Employees (employee_id, name, position, department, salary, employment_history, contact)
 VALUES
 ('1','Sibongile Nkosi', 'Software Engineer', 'Development', 70000, 'Joined in 2015, promoted to Senior in 2018', 'sibongile.nkosi@moderntech.com'),

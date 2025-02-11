@@ -8,6 +8,9 @@
     <!-- Form to Add Employee -->
     <div v-if="showForm" class="form-container">
       <form @submit.prevent="addEmployee">
+
+        <label for="employee_id">Employee ID</label>
+        <input type="text" v-model="newEmployee.employee_id" required />
         
         <label for="name">Name</label>
         <input type="text" v-model="newEmployee.name" required />
@@ -93,8 +96,18 @@
         </form>
       </div>
     </div>
+
+    <!-- Confirmation Alert Modal -->
+    <div v-if="showAlert" class="alert-modal">
+      <div class="alert-modal-content">
+        <p>Are you sure you want to delete this employee?</p>
+        <button @click="deleteEmployee(confirmDeleteEmployeeId)" class="alert-confirm-btn">Yes</button>
+        <button @click="closeAlert" class="alert-cancel-btn">Cancel</button>
+      </div>
+    </div>
   </div>
 </template>
+
 
 <script>
 export default {
@@ -120,6 +133,8 @@ export default {
         employment_history: null,
         contact: null
       },
+      showAlert: false, // Tracks the visibility of the delete confirmation alert
+      confirmDeleteEmployeeId: null, // Holds the employee_id for delete confirmation
     };
   },
   mounted() {
@@ -137,13 +152,18 @@ export default {
     },
     // Confirm Delete
     confirmDelete(employee_id) {
-      if (confirm('Are you sure you want to delete this employee?')) {
-        this.deleteEmployee(employee_id);
-      }
+      this.confirmDeleteEmployeeId = employee_id;
+      this.showAlert = true;
+    },
+    // Close the alert modal
+    closeAlert() {
+      this.showAlert = false;
+      this.confirmDeleteEmployeeId = null;
     },
     // Delete the employee
     deleteEmployee(employee_id) {
       this.$store.dispatch('deleteEmployee', employee_id);
+      this.closeAlert(); // Close the alert after deletion
     },
     // Add the new employee
     postEmployee() {
@@ -157,6 +177,7 @@ export default {
   }
 };
 </script>
+
 
 <style scoped>
 .table-container {
@@ -323,6 +344,53 @@ form button.submit-btn:hover {
 }
 
 .close-btn:hover {
+  background-color: #930000;
+}
+.alert-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+}
+
+.alert-modal-content {
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  width: 300px;
+  text-align: center;
+}
+
+.alert-confirm-btn,
+.alert-cancel-btn {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  margin: 10px;
+  cursor: pointer;
+}
+
+.alert-confirm-btn {
+  background-color: #28a745;
+  color: white;
+}
+
+.alert-confirm-btn:hover {
+  background-color: #218838;
+}
+
+.alert-cancel-btn {
+  background-color: #ff0000;
+  color: white;
+}
+
+.alert-cancel-btn:hover {
   background-color: #930000;
 }
 </style>

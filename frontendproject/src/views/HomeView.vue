@@ -8,14 +8,14 @@
         <select id="employee-select" v-model="selectedEmployeeId" @change="populateEmployeeDetails" required>
           <option disabled value="">Select an employee</option>
           <option v-for="employee in employeeList" :key="employee.employeeId" :value="employee.employeeId">
-            {{ employee.name }}
+            {{ employee.employeeId }} - {{ employee.name }}
           </option>
         </select>
       </div>
       <!-- Performance Metrics -->
       <div class="form-group">
         <label for="work-quality">Work Quality</label>
-        <select id="work-quality" v-model="form.workQuality" required>
+        <select id="work-quality" v-model="form.work_quality" required>
           <option disabled value="">Select a rating</option>
           <option value="1">1 - Poor</option>
           <option value="2">2 - Fair</option>
@@ -52,9 +52,8 @@
     <table v-if="formSubmitted" class="review-table">
       <thead>
         <tr>
+          <th>Employee ID</th>
           <th>Employee Name</th>
-          <th>Position</th>
-          <th>Review Period</th>
           <th>Work Quality</th>
           <th>Attendance</th>
           <th>Comments</th>
@@ -62,10 +61,9 @@
       </thead>
       <tbody>
         <tr>
-          <td>{{ form.employeeName }}</td>
-          <td>{{ form.position }}</td>
-          <td>{{ form.reviewPeriod }}</td>
-          <td>{{ form.workQuality }}</td>
+          <td>{{ form.employee_id }}</td>
+          <td>{{ form.employee_name }}</td>
+          <td>{{ form.work_quality }}</td>
           <td>{{ form.attendance }}</td>
           <td>{{ form.comments }}</td>
         </tr>
@@ -73,22 +71,28 @@
     </table>
   </div>
 </template>
+
 <script>
 export default {
   data() {
     return {
       employeeList: [
-        {"employeeId": 1, "name": "Sibongile Nkosi", "position": "Software Engineer"},
-        {"employeeId": 2, "name": "Lungile Moyo", "position": "HR Manager"},
-        {"employeeId": 3, "name": "Thabo Molefe", "position": "Quality Analyst"},
-        {"employeeId": 4, "name": "Keshav Naidoo", "position": "Sales Representative"},
-        {"employeeId": 5, "name": "Zanele Khumalo", "position": "Marketing Specialist"}
+        { "employeeId": 1, "name": "Sibongile Nkosi", "position": "Software Engineer" },
+        { "employeeId": 2, "name": "Lungile Moyo", "position": "HR Manager" },
+        { "employeeId": 3, "name": "Thabo Molefe", "position": "Quality Analyst" },
+        { "employeeId": 4, "name": "Keshav Naidoo", "position": "Sales Representative" },
+        { "employeeId": 5, "name": "Zanele Khumalo", "position": "Marketing Specialist" },
+        { "employeeId": 6, "name": "Business Analyst", "position": "Business Analyst" },
+        { "employeeId": 7, "name": "Customer Support", "position": "Customer Support" },
+        { "employeeId": 8, "name": "Product Manager", "position": "Product Manager" },
+        { "employeeId": 9, "name": "Data Scientist", "position": "Data Scientist" },
+        { "employeeId": 10, "name": "Operations Manager", "position": "Operations Manager" }
       ],
       form: {
-        employeeName: '',
+        employee_id: '',
+        employee_name: '',
         position: '',
-        reviewPeriod: '',
-        workQuality: '',
+        work_quality: '',
         attendance: '',
         comments: ''
       },
@@ -100,7 +104,8 @@ export default {
     populateEmployeeDetails() {
       const selectedEmployee = this.employeeList.find(emp => emp.employeeId === this.selectedEmployeeId);
       if (selectedEmployee) {
-        this.form.employeeName = selectedEmployee.name;
+        this.form.employee_id = selectedEmployee.employeeId;
+        this.form.employee_name = selectedEmployee.name;
         this.form.position = selectedEmployee.position;
       }
     },
@@ -110,6 +115,7 @@ export default {
   }
 };
 </script>
+
 <style scoped>
 .performance-review-form {
   max-width: 600px;

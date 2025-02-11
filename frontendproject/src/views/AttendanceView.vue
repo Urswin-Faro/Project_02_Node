@@ -269,9 +269,3 @@ button:hover {
   }
 }
 </style>
-
-
-
-
-
-

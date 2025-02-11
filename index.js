@@ -9,6 +9,9 @@ import { getAttendance } from './model/attendanceModel.js'
 import employeesRouter from './routes/employeesRouter.js';
 import { getEmployees } from './model/employeesModel.js';
 import reviewRouter from './routes/reviewRoutes.js';
+import payrollRoutes from './routes/payrollRouter.js'
+app.use('/payroll',payrollRoutes);
+app.use('/review',reviewRouter);
 
 const port = process.env.PORT || 3030;  // Updated to use process.env.PORT
 
@@ -16,6 +19,9 @@ const port = process.env.PORT || 3030;  // Updated to use process.env.PORT
 app.use(cors());
 app.use(express.json());
 
+app.get('/payroll', async (req, res) => {
+    
+})
 
 app.get('/Employees', async (req, res) => {  // Await the async function
     try {

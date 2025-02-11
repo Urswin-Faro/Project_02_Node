@@ -12,7 +12,7 @@ const getSingleEmployee = async (id) => {
 
 const addNewEmployee = async (employee_id, name, department, position,salary,employment_history, email) => {
     let [data] = await pool.query(
-        'INSERT INTO employees (employee_id, name, department, position,salary,employment_history, email) VALUES (?, ?, ?, ?, ?)', 
+        'INSERT INTO employees (employee_id, name, department, position,salary,employment_history, contact) VALUES (?, ?, ?, ?, ?, ?, ?)', 
         [employee_id, name, department, position,salary,employment_history, email]
     );
     return await getEmployees();

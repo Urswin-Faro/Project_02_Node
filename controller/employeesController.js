@@ -26,14 +26,11 @@ const getSingleEmployeeCon = async (req, res) => {
 const addNewEmployeeCon = async (req, res) => {
     try {
         console.log(req.body);
-        let {  name, department, position,salary,employment_history, email} = req.body;
-        if ( !name || !department || !position || !email || !salary || !employment_history) {
-            return res.status(400).json({ error: "Missing required fields" });
-        }
-        const employees = await addNewEmployee( name, department, position,salary,employment_history, email);
-        res.json({ employees });
+        console.log('hoya Chupapi');
+        let {  employee_id,name, department, position,salary,employment_history, email} = req.body;
+        res.json({ employee: await addNewEmployee(employee_id,name, department, position,salary,employment_history, email) });
     } catch (error) {
-        res.status(500).json({ error: "Error adding new employee", details: error.message });
+        res.status(500).json({ error: "Error adding employee", details: error.message });
     }
 };
 
@@ -42,17 +39,12 @@ const updateEmployeeCon = async (req, res) => {
         const employee_id = parseInt(req.params.employee_id);  // Get ID from params
         const { name, department, position,salary,employment_history, email } = req.body;  // Get fields from request body
 
-        if (!employee_id) {
-            return res.status(400).json({ error: "Missing employee ID" });
+        if (isNaN(employee_id)) {
+            return res.status(400).json({ error: "Invalid employee ID" });
         }
 
-        const updatedEmployee = await updateEmployee(employee_id, {name, department, position,salary,employment_history, email });
-
-        if (!updatedEmployee) {
-            return res.status(404).json({ error: "Employee not found" });
-        }
-
-        res.json({ updatedEmployee });
+        const employee = await updateEmployee(employee_id, { name, department, position,salary,employment_history, email });  // Update employee
+        res.json({ employee });
     } catch (error) {
         res.status(500).json({ error: "Error updating employee", details: error.message });
     }
