@@ -1,6 +1,5 @@
 CREATE DATABASE moderntech_db;
 USE moderntech_db;
-
 CREATE TABLE Employees (
     employee_id INT PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
@@ -33,9 +32,8 @@ CREATE TABLE Payroll (
     final_salary DECIMAL(10,2),
     FOREIGN KEY (employee_id) REFERENCES Employees(employee_id)
 );
-
 INSERT INTO Employees (employee_id, name, position, department, salary, employment_history, contact)
-VALUES 
+VALUES
 ('1','Sibongile Nkosi', 'Software Engineer', 'Development', 70000, 'Joined in 2015, promoted to Senior in 2018', 'sibongile.nkosi@moderntech.com'),
 ('2','Lungile Moyo', 'HR Manager', 'HR', 80000, 'Joined in 2013, promoted to Manager in 2017', 'lungile.moyo@moderntech.com'),
 ('3','Thabo Molefe', 'Quality Analyst', 'QA', 55000, 'Joined in 2018', 'thabo.molefe@moderntech.com'),
@@ -46,10 +44,8 @@ VALUES
 ('8','Farai Gumbo', 'Content Strategist', 'Marketing', 56000, 'Joined in 2021', 'farai.gumbo@moderntech.com'),
 ('9','Karabo Dlamini', 'Accountant', 'Finance', 62000, 'Joined in 2018', 'karabo.dlamini@moderntech.com'),
 ('10','Fatima Patel', 'Customer Support Lead', 'Support', 58000, 'Joined in 2016', 'fatima.patel@moderntech.com');
-
-
 INSERT INTO Attendance (employee_id, date, status)
-VALUES 
+VALUES
 (1, '2024-11-25', 'Present'),
 (1, '2024-11-26', 'Absent'),
 (1, '2024-11-27', 'Present'),
@@ -97,9 +93,8 @@ VALUES
 (9, '2024-11-29', 'Present'),
 (10, '2024-11-25', 'Present'),
 (10, '2024-11-26', 'Present');
-
 INSERT INTO LeaveRequests (employee_id, date, reason, status)
-VALUES 
+VALUES
 ('1','2024-11-22', 'Sick Leave', 'Approved'),
 ('1','2024-12-01', 'Personal', 'Pending'),
 ('2','2024-11-15', 'Family Responsibility', 'Denied'),
@@ -113,10 +108,8 @@ VALUES
 ('8','2024-12-02', 'Medical Appointment', 'Approved'),
 ('9','2024-11-19', 'Childcare', 'Denied'),
 ('10','2024-12-03', 'Vacation', 'Pending');
-
-
 INSERT INTO Payroll (employee_id, hours_worked, leave_deductions, final_salary)
-VALUES 
+VALUES
 ('1',160, 8, 69500),
 ('2',150, 10, 79000),
 ('3',170, 4, 54800),
