@@ -10,18 +10,29 @@ import employeesRouter from './routes/employeesRouter.js';
 import { getEmployees } from './model/employeesModel.js';
 import reviewRouter from './routes/reviewRoutes.js';
 import payrollRoutes from './routes/payrollRouter.js'
-app.use('/payroll',payrollRoutes);
-app.use('/review',reviewRouter);
+import { getLeaveRequest } from './model/attendanceModel.js';
 
-const port = process.env.PORT || 3030;  // Updated to use process.env.PORT
-
- const app = express();
+const app = express();
 app.use(cors());
 app.use(express.json());
 
-app.get('/payroll', async (req, res) => {
-    
-})
+app.use('/attendance',attendanceRouter);
+
+app.use('/payroll',payrollRoutes);
+app.use('/review',reviewRouter);
+app.use('/leaveRequest', attendanceRouter)
+
+const port = process.env.PORT || 3030;  // Updated to use process.env.PORT
+
+
+app.get('/leaveRequest', async (req, res) => {  // Await the async function
+    try {
+        const leaveRequests = await getLeaveRequest();  // Await async data
+        res.json({ leaveRequests });
+    } catch (error) {
+        res.status(500).json({ error: "Error fetching leave requests", details: error.message });
+    }
+});
 
 app.get('/Employees', async (req, res) => {  // Await the async function
     try {
@@ -31,8 +42,6 @@ app.get('/Employees', async (req, res) => {  // Await the async function
         res.status(500).json({ error: "Error fetching employees", details: error.message });
     }
 });
-app.use('/attendance',attendanceRouter)
-
 app.get('/attendance',async (req,res)=>{
     res.json({attendance: await getAttendance()})
 });

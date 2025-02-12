@@ -34,24 +34,24 @@
     </div>
     <!-- Leave Request Form (conditional rendering based on showLeaveRequestForm) -->
     <div v-if="showLeaveRequestForm" class="form-container">
-      <h2>Leave Request</h2>
+      <h2>Request Leave</h2>
       <label>
         <span>Employee ID:</span>
         <input type="text" v-model="leaveRequest.employee_id" />
       </label><br>
       <label>
-        <span>Start Date:</span>
-        <input type="date" v-model="leaveRequest.start_date" />
-      </label><br>
-      <label>
-        <span>End Date:</span>
-        <input type="date" v-model="leaveRequest.end_date" />
+        <span>Date:</span>
+        <input type="date" v-model="leaveRequest.date" />
       </label><br>
       <label>
         <span>Reason:</span>
-        <textarea v-model="leaveRequest.reason" rows="4"></textarea>
+        <textarea v-model="leaveRequest.reason" rows="2"></textarea>
       </label><br><br>
-      <button @click="submitLeaveRequest()">Submit Leave Request</button>
+      <label>
+        <span>Status:</span>
+        <input type="text" v-model="leaveRequest.status" />
+      </label><br>
+      <button @click="postLeaveRequest()">Submit Leave Request</button>
     </div>
     <!-- Attendance List Table (conditional rendering based on showAttendanceList) -->
     <div v-if="showAttendanceList" class="attendance-list">
@@ -80,22 +80,23 @@
         <thead>
           <tr>
             <th>Employee ID</th>
-            <th>Start Date</th>
-            <th>End Date</th>
+            <th>Date</th>
             <th>Reason</th>
+            <th>Status</th>
           </tr>
         </thead>
         <tbody>
-          <tr v-for="request in $store.state.leaveRequests" :key="request.employee_id">
-            <td>{{ request.employee_id }}</td>
-            <td>{{ request.start_date }}</td>
-            <td>{{ request.end_date }}</td>
-            <td>{{ request.reason }}</td>
+          <tr v-for="leaveRequest in $store.state.leaveRequests" :key="leaveRequest.employee_id">
+            <td>{{ leaveRequest.employee_id }}</td>
+            <td>{{ leaveRequest.date }}</td>
+            <td>{{ leaveRequest.reason }}</td>
+            <td>{{ leaveRequest.status }}</td>
           </tr>
         </tbody>
       </table>
     </div>
   </div>
+
 </template>
 <script>
 export default {
@@ -110,29 +111,28 @@ export default {
       showLeaveRequestForm: false,  // To control visibility of the leave form
       showAttendanceList: false,    // To control visibility of the attendance list
       showLeaveRequestList: false,  // To control visibility of the leave request list
+
       leaveRequest: {
         employee_id: null,
-        start_date: null,
-        end_date: null,
-        reason: null
+        date: null,
+        status: null
       }
     }
   },
   mounted() {
     this.$store.dispatch('getAttendance');
-    this.$store.dispatch('getLeaveRequests');  // Dispatch action to get leave requests
+    this.$store.dispatch('getLeaveRequest');  // Dispatch action to get leave requests
   },
   methods: {
     postAttendant() {
       this.$store.dispatch('postAttendance', this.attendant);
     },
-    submitLeaveRequest() {
-      // Handle the leave request submission logic (e.g., dispatch to store or API)
-      console.log('Leave Request Submitted:', this.leaveRequest);
-      // Reset the form after submission
-      this.leaveRequest = { employee_id: null, start_date: null, end_date: null, reason: null };
-      this.showLeaveRequestForm = false;  // Hide the form after submission
-    }
+
+   postLeaveRequest(){
+    console.log(this.
+leaveRequest);
+    this.$store.dispatch('postLeaveRequest', this.leaveRequest);
+  }
   },
 }
 </script>

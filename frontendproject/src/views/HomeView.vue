@@ -45,15 +45,14 @@
       </div>
       <!-- Submit Button -->
       <div class="form-group">
-        <button type="submit" class="submit-button">Submit Review</button>
+        <button type="submit" @click="postReview()" class="submit-button" >Submit Review</button>
       </div>
     </form>
     <!-- Table to display form data after submission -->
-    <table v-if="formSubmitted" class="review-table">
+    <table v-for="review in $store.state.reviews" :key="review.employee_id" class="review-table">
       <thead>
         <tr>
           <th>Employee ID</th>
-          <th>Employee Name</th>
           <th>Work Quality</th>
           <th>Attendance</th>
           <th>Comments</th>
@@ -61,11 +60,10 @@
       </thead>
       <tbody>
         <tr>
-          <td>{{ form.employee_id }}</td>
-          <td>{{ form.employee_name }}</td>
-          <td>{{ form.work_quality }}</td>
-          <td>{{ form.attendance }}</td>
-          <td>{{ form.comments }}</td>
+          <td>{{ review.employee_id }}</td>
+          <td>{{ review.work_quality }}</td>
+          <td>{{ review.attendance }}</td>
+          <td>{{ review.coments }}</td>
         </tr>
       </tbody>
     </table>
@@ -90,7 +88,6 @@ export default {
       ],
       form: {
         employee_id: '',
-        employee_name: '',
         position: '',
         work_quality: '',
         attendance: '',
@@ -100,7 +97,14 @@ export default {
       formSubmitted: false
     };
   },
+  // mounted(){
+  //   this.$store.dispatch('getReview');
+  // },
+
   methods: {
+    postReview() {
+      this.$store.dispatch('postReview', this.review);
+    },
     populateEmployeeDetails() {
       const selectedEmployee = this.employeeList.find(emp => emp.employeeId === this.selectedEmployeeId);
       if (selectedEmployee) {
